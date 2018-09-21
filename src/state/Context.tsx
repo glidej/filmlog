@@ -20,17 +20,16 @@ const INITIAL_STATE = {
       camera: 'Voigtländer Bessa R',
       film: 'Fujifilm Pro 400h'
     }
-  },
-  selectedRoll: null
+  }
 }
 export class GlobalContextProvider extends Component<any, IGlobalState> {
-
   state = {
     ...INITIAL_STATE,
-    dispatch: (action: Action) => {
+    dispatch: (action: Action, callback?: () => void) => {
       this.setState((currentState: any) => {
-        return rootReducer(currentState, action);
-      })
+        const reduced = rootReducer(currentState, action);
+        return reduced;
+      }, callback)
     }
   };
 

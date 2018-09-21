@@ -1,39 +1,64 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
 import {
     Text, 
     Card, 
     CardItem, 
     Body, 
     Button, 
-    ActionSheet
+    ActionSheet,
+    Content
 } from 'native-base';
 import { withGlobalContext } from '../../state/Context';
 import { IGlobalState, IRoll } from '../../state/types';
-import Layout from '../Layout';
 
-class Introduction extends Component<{ global: IGlobalState, navigation: any }, any> {
-    showActionSheet = () => {
-        const { rolls } = this.props.global;
-        const buttons = Object.keys(rolls).map((rollId: string): string => {
+class Introduction extends Component<{ global: IGlobalState, navigation: any }, { buttons: string[], keys: string[]}> {
+    state: { buttons: string[]; keys: string[] };
+
+    constructor(props: any) {
+        super(props);
+
+        this.state = {
+            buttons: [],
+            keys: []
+        }
+    }
+
+    static getDerivedStateFromProps(props: any) {
+        const { rolls } = props.global;
+        const rollKeys = Object.keys(rolls);
+        let keys: string[] = [];
+
+        let buttons: string[] = rollKeys.map((rollId: string): string => {
+            keys.push(rollId);
             return rolls[rollId]['name'];
         });
 
+        return {
+            buttons,
+            keys
+        }
+    }
+
+    showActionSheet = () => {
         ActionSheet.show({
-            options: buttons,
+            options: this.state.buttons,
             title: "Select A Roll"
-        }, (buttonIndex) => {
-            const rollId = Object.keys(rolls)[buttonIndex];
-            this.props.global.dispatch({type: "UPDATE_SELECTED_ROLL", value: rolls[rollId]});
-        });
+        }, this.handleSelection);
+    }
+
+    handleSelection = (buttonIndex: number) => {
+        const { navigate } = this.props.navigation;
+        const rollId = this.state.keys[buttonIndex];
+        const roll = this.props.global.rolls[rollId];
+
+        navigate('Detail', { roll });
     }
 
     render() {
-        const { selectedRoll } = this.props.global;
         const { navigate } = this.props.navigation;
 
         return (
-            <Layout>
+            <Content padder>
                 <Card>
                     <CardItem header>
                         <Text>Start A New Roll</Text>
@@ -58,21 +83,7 @@ class Introduction extends Component<{ global: IGlobalState, navigation: any }, 
                         </Body>
                     </CardItem>
                 </Card>
-                <Card>
-                    <CardItem footer>
-                        <Text>Selected Roll</Text>
-                    </CardItem>
-                    <CardItem>
-                        <Body>
-                            {selectedRoll ? (
-                                <Text>{`${selectedRoll.name} -- ${selectedRoll.camera} -- ${selectedRoll.film}`}</Text>
-                            ): (
-                                <Text>No Roll Selected</Text>
-                            )}
-                        </Body>
-                    </CardItem>
-                </Card>
-            </Layout>
+            </Content>
         );
     }
 }
