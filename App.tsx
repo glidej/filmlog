@@ -1,28 +1,11 @@
 import React, { Component } from 'react';
 import { Text } from 'react-native';
-import Introduction from './src/components/Introduction/Introduction';
-import Setup from './src/components/Setup/Setup';
 import { GlobalContextProvider } from './src/state/Context';
 import {
-  Container, 
-  Content, 
-  Header, 
-  Body, 
-  Title,
   Root
 } from 'native-base';
-import { createStackNavigator } from 'react-navigation';
 import { Font } from 'expo';
-
-const Routable = createStackNavigator({
-  Introduction,
-  Setup
-}, {
-  navigationOptions: {
-    header: null
-  },
-  initialRouteName: 'Introduction'
-});
+import { Router } from './src/components/Routes';
 
 export default class App extends Component<any, any> {
   state = { fontLoaded: false }
@@ -39,7 +22,9 @@ export default class App extends Component<any, any> {
     return (
       <GlobalContextProvider>
         { this.state.fontLoaded ? (
-          <Routable/>
+          <Root>
+            <Router/>
+          </Root>
         ) : (
           <Text>Loading</Text>
         )}
