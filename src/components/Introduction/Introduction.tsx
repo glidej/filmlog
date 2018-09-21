@@ -8,7 +8,8 @@ import {
     Button, 
     ActionSheet
 } from 'native-base';
-import { withGlobalContext, IGlobalState, IRoll, GlobalContextProvider } from '../../state/Context';
+import { withGlobalContext } from '../../state/Context';
+import { IGlobalState, IRoll } from '../../state/types';
 import Layout from '../Layout';
 
 class Introduction extends Component<{ global: IGlobalState, navigation: any }, any> {

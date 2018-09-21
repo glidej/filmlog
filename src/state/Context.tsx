@@ -1,4 +1,8 @@
 import React, { Component } from 'react';
+import rootReducer from './reducer';
+import { IGlobalState, Action } from './types';
+
+const GlobalContext = React.createContext({});
 
 const INITIAL_STATE = {
   profile: {
@@ -19,56 +23,6 @@ const INITIAL_STATE = {
   },
   selectedRoll: null
 }
-
-const GlobalContext = React.createContext({});
-
-export interface IGlobalState {
-  dispatch: (action: Action) => void;
-  profile: {
-    firstName: string;
-    lastName: string;
-  },
-  rolls: {
-    [rollId: string]: IRoll;
-  }
-  selectedRoll: IRoll | null;
-}
-
-export interface IRoll {
-  name: string;
-  camera: string;
-  film: string;
-}
-
-interface Action {
-  type: string;
-  value: any;
-}
-
-const rootReducer = (state: IGlobalState, action: Action) => {
-  switch(action.type) {
-    case "UPDATE_SELECTED_ROLL":
-      return { ...state, selectedRoll: action.value };
-    case "ADD_NEW_ROLL":
-      // TODO prevent duplicates?
-      const { uuid, camera, film, name } = action.value;
-
-      return {
-        ...state,
-        rolls: {
-          ...state.rolls,
-          [uuid]: {
-            camera,
-            film,
-            name,
-          }
-        }
-      };
-    default:
-      return state;
-  }
-}
-
 export class GlobalContextProvider extends Component<any, IGlobalState> {
 
   state = {
