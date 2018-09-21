@@ -11,7 +11,7 @@ import { IGlobalState, IRoll } from '../../state/types';
 import { default as uuid } from 'uuid/v4';
 import { View } from 'react-native';
 
-class Setup extends Component<{ global: IGlobalState, navigation: IRoll }, any> {
+class Setup extends Component<{ global: IGlobalState, navigation: any }, IRoll> {
     uuid: string;
     state: IRoll;
 
