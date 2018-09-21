@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Text } from 'react-native';
 import Introduction from './src/components/Introduction/Introduction';
+import Setup from './src/components/Setup/Setup';
 import { GlobalContextProvider } from './src/state/Context';
 import {
   Container, 
@@ -10,7 +11,18 @@ import {
   Title,
   Root
 } from 'native-base';
+import { createStackNavigator } from 'react-navigation';
 import { Font } from 'expo';
+
+const Routable = createStackNavigator({
+  Introduction,
+  Setup
+}, {
+  navigationOptions: {
+    header: null
+  },
+  initialRouteName: 'Introduction'
+});
 
 export default class App extends Component<any, any> {
   state = { fontLoaded: false }
@@ -27,22 +39,10 @@ export default class App extends Component<any, any> {
     return (
       <GlobalContextProvider>
         { this.state.fontLoaded ? (
-          <Root>
-            <Container>
-                <Header>
-                  <Body>
-                    <Title>FilmLog</Title>
-                  </Body>
-                </Header>
-                <Content padder>
-                  <Introduction/>
-                </Content>
-            </Container>
-            </Root>
+          <Routable/>
         ) : (
           <Text>Loading</Text>
         )}
-       
       </GlobalContextProvider>
     );
   }

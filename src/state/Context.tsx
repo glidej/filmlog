@@ -5,28 +5,32 @@ const INITIAL_STATE = {
     firstName: "Jacob",
     lastName: "Glide"
   },
-  rolls: [{
+  rolls: {
+    "uid_1": {
       name: 'Belle Isle',
       camera: 'Canon AE-1',
       film: 'Kodak Portra 400'
-    }, {
+    }, 
+    "uid_2": {
       name: 'The Zoo',
       camera: 'Voigtländer Bessa R',
       film: 'Fujifilm Pro 400h'
     }
-  ],
+  },
   selectedRoll: null
 }
 
 const GlobalContext = React.createContext({});
 
 export interface IGlobalState {
-  dispatch: (action: any) => void;
+  dispatch: (action: Action) => void;
   profile: {
     firstName: string;
     lastName: string;
   },
-  rolls: IRoll[];
+  rolls: {
+    [rollId: string]: IRoll;
+  }
   selectedRoll: IRoll | null;
 }
 
@@ -43,8 +47,23 @@ interface Action {
 
 const rootReducer = (state: IGlobalState, action: Action) => {
   switch(action.type) {
-    case "UPDATE_ROLL":
+    case "UPDATE_SELECTED_ROLL":
       return { ...state, selectedRoll: action.value };
+    case "ADD_NEW_ROLL":
+      // TODO prevent duplicates?
+      const { uuid, camera, film, name } = action.value;
+
+      return {
+        ...state,
+        rolls: {
+          ...state.rolls,
+          [uuid]: {
+            camera,
+            film,
+            name,
+          }
+        }
+      };
     default:
       return state;
   }
@@ -56,8 +75,7 @@ export class GlobalContextProvider extends Component<any, IGlobalState> {
     ...INITIAL_STATE,
     dispatch: (action: Action) => {
       this.setState((currentState: any) => {
-        const reduced = rootReducer(currentState, action);
-        return reduced;
+        return rootReducer(currentState, action);
       })
     }
   };

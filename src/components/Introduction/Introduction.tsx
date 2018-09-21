@@ -1,34 +1,45 @@
 import React, { Component } from 'react';
-import { Text, Container, Card, CardItem, Body, Button, ActionSheet } from 'native-base';
-import { withGlobalContext, IGlobalState } from '../../state/Context';
+import { View } from 'react-native';
+import {
+    Text, 
+    Card, 
+    CardItem, 
+    Body, 
+    Button, 
+    ActionSheet
+} from 'native-base';
+import { withGlobalContext, IGlobalState, IRoll, GlobalContextProvider } from '../../state/Context';
+import Layout from '../Layout';
 
-class Introduction extends Component<{ global: IGlobalState }, any> {
+class Introduction extends Component<{ global: IGlobalState, navigation: any }, any> {
     showActionSheet = () => {
         const { rolls } = this.props.global;
-        const buttons = rolls.map((roll): string => {
-            return roll['name'];
+        const buttons = Object.keys(rolls).map((rollId: string): string => {
+            return rolls[rollId]['name'];
         });
 
         ActionSheet.show({
             options: buttons,
             title: "Select A Roll"
         }, (buttonIndex) => {
-            this.props.global.dispatch({type: "UPDATE_ROLL", value: rolls[buttonIndex]});
+            const rollId = Object.keys(rolls)[buttonIndex];
+            this.props.global.dispatch({type: "UPDATE_SELECTED_ROLL", value: rolls[rollId]});
         });
     }
 
     render() {
         const { selectedRoll } = this.props.global;
+        const { navigate } = this.props.navigation;
 
         return (
-            <Container>
+            <Layout>
                 <Card>
                     <CardItem header>
                         <Text>Start A New Roll</Text>
                     </CardItem>
                     <CardItem>
                         <Body>
-                            <Button>
+                            <Button onPress={() => navigate('Setup')}>
                                 <Text>Begin</Text>
                             </Button>
                         </Body>
@@ -60,7 +71,7 @@ class Introduction extends Component<{ global: IGlobalState }, any> {
                         </Body>
                     </CardItem>
                 </Card>
-            </Container>
+            </Layout>
         );
     }
 }
