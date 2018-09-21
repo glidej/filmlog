@@ -27,8 +27,7 @@ export class GlobalContextProvider extends Component<any, IGlobalState> {
     ...INITIAL_STATE,
     dispatch: (action: Action, callback?: () => void) => {
       this.setState((currentState: any) => {
-        const reduced = rootReducer(currentState, action);
-        return reduced;
+        return rootReducer(currentState, action);
       }, callback)
     }
   };
